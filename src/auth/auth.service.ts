@@ -41,7 +41,6 @@ export class AuthService {
       // Reutilizar el OTP existente
       otpCode = user.otp!;
       expiresAt = user.otpExpiresAt!;
-      console.log(`Reutilizando OTP existente para ${email}`);
     } else {
       // Generar nuevo OTP
       otpCode = generateOTP();
@@ -56,7 +55,6 @@ export class AuthService {
         },
       });
 
-      console.log(`Nuevo OTP generado para ${email}`);
     }
 
     // Enviar el código por email

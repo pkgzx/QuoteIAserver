@@ -74,7 +74,7 @@ export class EmailService {
           </div>
 
           <p style="color: #666; font-size: 14px; line-height: 1.5; margin-top: 30px;">
-            <strong>⏰ Este código expirará en ${expirationMinutes} minutos.</strong>
+            <strong> Este código expirará en ${expirationMinutes} minutos.</strong>
           </p>
 
           <p style="color: #666; font-size: 14px; line-height: 1.5;">

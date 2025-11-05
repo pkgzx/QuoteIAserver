@@ -1,0 +1,327 @@
+id: 1
+data: {"type":"tool_start","tools":["search_knowledge_base"]}
+
+id: 2
+data: {"type":"tool_result","name":"search_knowledge_base","result":{"results":[{"content":"000     | >$2,000           |\r\n| Manager  | $10,000    | >$10,000          |\r\n\r\n## PRECIOS AUTORIZADOS\r\n\r\n**Tecnología:**\r\n- Laptop básica: $800-$1,200\r\n- Laptop premium: $1,800-$2,500 (justificar)\r\n- Monitor: $200-$400\r\n- Licencia software: $50-$200/año\r\n\r\n**Marketing:**\r\n- Publicidad digital: $500-$3,000/mes\r\n- Diseño gráfico: $300-$800/proyecto\r\n\r\n**Operaciones:**\r\n- Equipamiento: $1,000-$5,000/unidad\r\n- Mantenimiento: $200-$1,000/mes\r\n\r\n## REGLAS\r\n\r\n1. Compras >$5,000 requieren justificación","source":"company-policy.md"},{"content":" escrita\r\n2. Precio >20% sobre estándar requiere aprobación especial\r\n3. Categoría restringida (vehículos, seguridad): Director aprueba\r\n4. Presupuesto insuficiente: solicitar reasignación\r\n\r\n## EJEMPLOS\r\n\r\n APROBADO: 5 laptops Dell $1,100 c/u = $5,500 (Manager, hay presupuesto)\r\n⚠️ REQUIERE: 10 laptops $1,200 c/u = $12,000 (excede límite Manager)\r\n RECHAZADO: Consultoría $25,000 (sin presupuesto disponible)","source":"company-policy.md"},{"content":"# Políticas de Compras - TechStart Inc.\r\n\r\n## PRESUPUESTOS DEPARTAMENTALES (USD/año)\r\n\r\n| Departamento | Presupuesto | Disponible |\r\n|--------------|-------------|------------|\r\n| Tecnología   | $50,000     | $35,000    |\r\n| Marketing    | $30,000     | $22,000    |\r\n| Operaciones  | $40,000     | $30,000    |\r\n\r\n## LÍMITES DE APROBACIÓN\r\n\r\n| Nivel    | Hasta      | Requiere Gerencia |\r\n|----------|------------|-------------------|\r\n| Junior   | $500       | >$500             |\r\n| Senior   | $2,","source":"company-policy.md"}],"message":"3 resultados encontrados"},"trace":"🔧 Executing tool: search_knowledge_base\n📥 Arguments: {\n  \"query\": \"límite de compra de laptops\"\n}\n Result: {\n  \"results\": [\n    {\n      \"content\": \"000     | >$2,000           |\\r\\n| Manager  | $10,000    | >$10,000          |\\r\\n\\r\\n## PRECIOS AUTORIZADOS\\r\\n\\r\\n**Tecnología:**\\r\\n- Laptop básica: $800-$1,200\\r\\n- Laptop premium: $1,800-$2,500 (justificar)\\r\\n- Monitor: $200-$400\\r\\n- Licencia software: $50-$200/año\\r\\n\\r\\n**Marketing:**\\r\\n- Publicidad digital: $500-$3,000/mes\\r\\n- Diseño gráfico: $300-$800/proyecto\\r\\n\\r\\n**Operaciones:**\\r\\n- Equipamiento: $1,000-$5,000/unidad\\r\\n- Mantenimiento: $200-$1,000/mes\\r\\n\\r\\n## REGLAS\\r\\n\\r\\n1. Compras >$5,000 requieren justificación\",\n      \"source\": \"company-policy.md\"\n    },\n    {\n      \"content\": \" escrita\\r\\n2. Precio >20% sobre estándar requiere aprobación especial\\r\\n3. Categoría restringida (vehículos, seguridad): Director aprueba\\r\\n4. Presupuesto insuficiente: solicitar reasignación\\r\\n\\r\\n## EJEMPLOS\\r\\n\\r\\n APROBADO: 5 laptops Dell $1,100 c/u = $5,500 (Manager, hay presupuesto)\\r\\n⚠️ REQUIERE: 10 laptops $1,200 c/u = $12,000 (excede límite Manager)\\r\\n RECHAZADO: Consultoría $25,000 (sin presupuesto disponible)\",\n      \"source\": \"company-policy.md\"\n    },\n    {\n      \"content\": \"# Políticas de Compras - TechStart Inc.\\r\\n\\r\\n## PRESUPUESTOS DEPARTAMENTALES (USD/año)\\r\\n\\r\\n| Departamento | Presupuesto | Disponible |\\r\\n|--------------|-------------|------------|\\r\\n| Tecnología   | $50,000     | $35,000    |\\r\\n| Marketing    | $30,000     | $22,000    |\\r\\n| Operaciones  | $40,000     | $30,000    |\\r\\n\\r\\n## LÍMITES DE APROBACIÓN\\r\\n\\r\\n| Nivel    | Hasta      | Requiere Gerencia |\\r\\n|----------|------------|-------------------|\\r\\n| Junior   | $500       | >$500             |\\r\\n| Senior   | $2,\",\n      \"source\": \"company-policy.md\"\n    }\n  ],\n  \"message\": \"3 resultados encontrados\"\n}"}
+
+id: 3
+data: {"type":"content","content":"No"}
+
+id: 4
+data: {"type":"content","content":" puedes"}
+
+id: 5
+data: {"type":"content","content":" comprar"}
+
+id: 6
+data: {"type":"content","content":" "}
+
+id: 7
+data: {"type":"content","content":"5"}
+
+id: 8
+data: {"type":"content","content":" laptops"}
+
+id: 9
+data: {"type":"content","content":" de"}
+
+id: 10
+data: {"type":"content","content":" $"}
+
+id: 11
+data: {"type":"content","content":"3"}
+
+id: 12
+data: {"type":"content","content":","}
+
+id: 13
+data: {"type":"content","content":"000"}
+
+id: 14
+data: {"type":"content","content":" cada"}
+
+id: 15
+data: {"type":"content","content":" una"}
+
+id: 16
+data: {"type":"content","content":","}
+
+id: 17
+data: {"type":"content","content":" ya"}
+
+id: 18
+data: {"type":"content","content":" que"}
+
+id: 19
+data: {"type":"content","content":" eso"}
+
+id: 20
+data: {"type":"content","content":" sum"}
+
+id: 21
+data: {"type":"content","content":"aría"}
+
+id: 22
+data: {"type":"content","content":" un"}
+
+id: 23
+data: {"type":"content","content":" total"}
+
+id: 24
+data: {"type":"content","content":" de"}
+
+id: 25
+data: {"type":"content","content":" $"}
+
+id: 26
+data: {"type":"content","content":"15"}
+
+id: 27
+data: {"type":"content","content":","}
+
+id: 28
+data: {"type":"content","content":"000"}
+
+id: 29
+data: {"type":"content","content":","}
+
+id: 30
+data: {"type":"content","content":" que"}
+
+id: 31
+data: {"type":"content","content":" exced"}
+
+id: 32
+data: {"type":"content","content":"e"}
+
+id: 33
+data: {"type":"content","content":" el"}
+
+id: 34
+data: {"type":"content","content":" límite"}
+
+id: 35
+data: {"type":"content","content":" de"}
+
+id: 36
+data: {"type":"content","content":" compra"}
+
+id: 37
+data: {"type":"content","content":" sin"}
+
+id: 38
+data: {"type":"content","content":" just"}
+
+id: 39
+data: {"type":"content","content":"ificación"}
+
+id: 40
+data: {"type":"content","content":","}
+
+id: 41
+data: {"type":"content","content":" que"}
+
+id: 42
+data: {"type":"content","content":" es"}
+
+id: 43
+data: {"type":"content","content":" de"}
+
+id: 44
+data: {"type":"content","content":" $"}
+
+id: 45
+data: {"type":"content","content":"5"}
+
+id: 46
+data: {"type":"content","content":","}
+
+id: 47
+data: {"type":"content","content":"000"}
+
+id: 48
+data: {"type":"content","content":".\n\n"}
+
+id: 49
+data: {"type":"content","content":"Sin"}
+
+id: 50
+data: {"type":"content","content":" embargo"}
+
+id: 51
+data: {"type":"content","content":","}
+
+id: 52
+data: {"type":"content","content":" si"}
+
+id: 53
+data: {"type":"content","content":" tu"}
+
+id: 54
+data: {"type":"content","content":" gerente"}
+
+id: 55
+data: {"type":"content","content":" está"}
+
+id: 56
+data: {"type":"content","content":" de"}
+
+id: 57
+data: {"type":"content","content":" acuerdo"}
+
+id: 58
+data: {"type":"content","content":" y"}
+
+id: 59
+data: {"type":"content","content":" hay"}
+
+id: 60
+data: {"type":"content","content":" presupuesto"}
+
+id: 61
+data: {"type":"content","content":" disponible"}
+
+id: 62
+data: {"type":"content","content":","}
+
+id: 63
+data: {"type":"content","content":" podrían"}
+
+id: 64
+data: {"type":"content","content":" considerar"}
+
+id: 65
+data: {"type":"content","content":" la"}
+
+id: 66
+data: {"type":"content","content":" just"}
+
+id: 67
+data: {"type":"content","content":"ificación"}
+
+id: 68
+data: {"type":"content","content":" de"}
+
+id: 69
+data: {"type":"content","content":" la"}
+
+id: 70
+data: {"type":"content","content":" compra"}
+
+id: 71
+data: {"type":"content","content":","}
+
+id: 72
+data: {"type":"content","content":" dado"}
+
+id: 73
+data: {"type":"content","content":" que"}
+
+id: 74
+data: {"type":"content","content":" "}
+
+id: 75
+data: {"type":"content","content":"5"}
+
+id: 76
+data: {"type":"content","content":" laptops"}
+
+id: 77
+data: {"type":"content","content":" a"}
+
+id: 78
+data: {"type":"content","content":" $"}
+
+id: 79
+data: {"type":"content","content":"3"}
+
+id: 80
+data: {"type":"content","content":","}
+
+id: 81
+data: {"type":"content","content":"000"}
+
+id: 82
+data: {"type":"content","content":" cada"}
+
+id: 83
+data: {"type":"content","content":" una"}
+
+id: 84
+data: {"type":"content","content":" requieren"}
+
+id: 85
+data: {"type":"content","content":" aprobación"}
+
+id: 86
+data: {"type":"content","content":" especial"}
+
+id: 87
+data: {"type":"content","content":".\n\n"}
+
+id: 88
+data: {"type":"content","content":"Si"}
+
+id: 89
+data: {"type":"content","content":" necesitas"}
+
+id: 90
+data: {"type":"content","content":" más"}
+
+id: 91
+data: {"type":"content","content":" información"}
+
+id: 92
+data: {"type":"content","content":" sobre"}
+
+id: 93
+data: {"type":"content","content":" el"}
+
+id: 94
+data: {"type":"content","content":" proceso"}
+
+id: 95
+data: {"type":"content","content":" para"}
+
+id: 96
+data: {"type":"content","content":" esto"}
+
+id: 97
+data: {"type":"content","content":" o"}
+
+id: 98
+data: {"type":"content","content":" deseas"}
+
+id: 99
+data: {"type":"content","content":" hacer"}
+
+id: 100
+data: {"type":"content","content":" otra"}
+
+id: 101
+data: {"type":"content","content":" cosa"}
+
+id: 102
+data: {"type":"content","content":","}
+
+id: 103
+data: {"type":"content","content":" por"}
+
+id: 104
+data: {"type":"content","content":" favor"}
+
+id: 105
+data: {"type":"content","content":" há"}
+
+id: 106
+data: {"type":"content","content":"zm"}
+
+id: 107
+data: {"type":"content","content":"elo"}
+
+id: 108
+data: {"type":"content","content":" saber"}
+
+id: 109
+data: {"type":"content","content":"."}
+

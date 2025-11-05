@@ -1,44 +1,124 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  extensions = [pgvector(map: "vector")]
 }
 
 model user {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  name      String
-  otp       Int?
-  otpExpiresAt DateTime?
-  department String?
+  id            Int              @id @default(autoincrement())
+  email         String           @unique
+  name          String
+  otp           Int?
+  otpExpiresAt  DateTime?
+  department    String?
+  createdAt     DateTime         @default(now())
+  requests      RequestShopping[]
+  conversations Conversation[]
+  sessions      Session[]
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    Int
+  user      user     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token     String   @unique
+  expiresAt DateTime
   createdAt DateTime @default(now())
-  requests  RequestShopping[]
+
+  @@index([userId])
+  @@index([token])
+}
+
+model Conversation {
+  id             String          @id @default(cuid())
+  userId         Int?
+  user           user?           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title          String          @default("New Conversation")
+  isAuthenticated Boolean        @default(false)
+  messages       Message[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  @@index([userId])
+}
+
+model Message {
+  id             String       @id @default(cuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  role           MessageRole
+  content        String       @db.Text
+  toolCalls      Json?        // Store tool execution details
+  createdAt      DateTime     @default(now())
+
+  @@index([conversationId])
+}
+
+enum MessageRole {
+  USER
+  ASSISTANT
+  SYSTEM
+  TOOL
 }
 
 model RequestShopping {
-  id          String   @id @default(cuid())
-  item       String
-  quantity   Int
-  estimatedPrice Float
-  justification String?
-  status    RequestStatus @default(PENDING)
-  requestedById Int
-  requestedBy user @relation(fields: [requestedById], references: [id])
-  createdAt  DateTime @default(now())
+  id                  String        @id @default(cuid())
+  item                String
+  quantity            Int
+  estimatedPrice      Float
+  justification       String?
+  status              RequestStatus @default(PENDING)
+  requestedById       Int
+  requestedBy         user          @relation(fields: [requestedById], references: [id])
+
+  // MercadoLibre integration fields
+  meliProductId       String?       // ID del producto en MercadoLibre
+  meliProductName     String?       // Nombre del producto seleccionado
+  meliProductLink     String?       // URL del producto
+  meliProductPrice    Float?        // Precio original en moneda local
+  meliProductCurrency String?       // Moneda (ARS, COP, USD)
+  priceUSD            Float?        // Precio convertido a USD
+  quotationPdfPath    String?       // Ruta al PDF de cotización
+  meliSearchResults   Json?         // Top 5 productos encontrados (para auditoría)
+
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
 }
 
 enum RequestStatus {
   PENDING
   APPROVED
   REJECTED
-  TOTAL
+  COMPLETED
+}
+
+// RAG: Document embeddings
+model Document {
+  id         String                 @id @default(cuid())
+  title      String
+  content    String                 @db.Text
+  filePath   String
+  metadata   Json?
+  chunks     DocumentChunk[]
+  createdAt  DateTime               @default(now())
+  updatedAt  DateTime               @updatedAt
+
+  @@index([filePath])
+}
+
+model DocumentChunk {
+  id          String   @id @default(cuid())
+  documentId  String
+  document    Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  content     String   @db.Text
+  embedding   Unsupported("vector(1536)")?
+  chunkIndex  Int
+  createdAt   DateTime @default(now())
+
+  @@index([documentId])
 }
