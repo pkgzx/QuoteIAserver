@@ -1,5 +1,6 @@
 import { Module } from "@nestjs/common";
 import { ScheduleModule } from '@nestjs/schedule';
+import { ConfigModule } from './config/config.module';
 import { AuthModule } from './auth/auth.module';
 import { OrmModule } from "./orm/orm.module";
 import { SeederModule } from "./seeder/seeder.module";
@@ -12,6 +13,7 @@ import { QuotationModule } from './quotation/quotation.module';
 
 @Module({
   imports: [
+    ConfigModule, // Global configuration module
     ScheduleModule.forRoot(),
     AuthModule,
     OrmModule,

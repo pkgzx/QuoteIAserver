@@ -80,7 +80,7 @@ export class MercadolibreService implements OnModuleInit {
       baseURL: this.baseUrl,
       timeout: 10000,
       headers: {
-        'User-Agent': 'ShoppingIA/1.0',
+        'User-Agent': 'QuoteIA/1.0',
         'Accept': 'application/json',
       },
     });

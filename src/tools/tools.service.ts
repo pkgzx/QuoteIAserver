@@ -1,8 +1,14 @@
-import { Injectable, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  UnauthorizedException,
+  BadRequestException,
+} from '@nestjs/common';
 import { OrmService } from '../orm/orm.service';
 import { RagService } from '../rag/rag.service';
 import { SuconelService } from '../integrations/suconel/suconel.service';
 import { QuotationService } from '../quotation/quotation.service';
+import { EnvironmentConfig } from '../config/environment.config';
 
 export interface ToolDefinition {
   name: string;
@@ -23,6 +29,7 @@ export class ToolsService {
     private readonly rag: RagService,
     private readonly suconel: SuconelService,
     private readonly quotation: QuotationService,
+    private readonly config: EnvironmentConfig,
   ) {}
 
   getToolDefinitions(): ToolDefinition[] {
@@ -76,7 +83,7 @@ export class ToolsService {
     userId?: number,
   ): Promise<{ result: any; trace: string }> {
     const trace = `Executing tool: ${toolName}\n📥 Arguments: ${JSON.stringify(args, null, 2)}`;
-    console.log(trace);
+    this.logger.debug(trace);
 
     try {
       let result: any;
@@ -84,7 +91,9 @@ export class ToolsService {
       switch (toolName) {
         case 'create_shopping_request':
           if (!userId) {
-            throw new Error('Authentication required to create requests');
+            throw new UnauthorizedException(
+              'Authentication required to create requests'
+            );
           }
           result = await this.createShoppingRequest(userId, args);
           break;
@@ -95,21 +104,23 @@ export class ToolsService {
 
         case 'get_user_requests':
           if (!userId) {
-            throw new Error('Authentication required to view requests');
+            throw new UnauthorizedException(
+              'Authentication required to view requests'
+            );
           }
           result = await this.getUserRequests(userId, args.status);
           break;
 
         default:
-          throw new Error(`Unknown tool: ${toolName}`);
+          throw new BadRequestException(`Unknown tool: ${toolName}`);
       }
 
-      const successTrace = `${trace}\n Result: ${JSON.stringify(result, null, 2)}`;
-      console.log(successTrace);
+      const successTrace = `${trace}\n ✅ Result: ${JSON.stringify(result, null, 2)}`;
+      this.logger.debug(successTrace);
       return { result, trace: successTrace };
     } catch (error) {
-      const errorTrace = `${trace}\n Error: ${error.message}`;
-      console.error(errorTrace);
+      const errorTrace = `${trace}\n ❌ Error: ${error.message}`;
+      this.logger.error(errorTrace, error.stack);
       return { result: { error: error.message }, trace: errorTrace };
     }
   }
@@ -167,7 +178,6 @@ export class ToolsService {
             currency: 'COP',
             score: item.score,
             reasons: item.reasons,
-            link: `https://suconel.com/producto/${item.product.slug}`,
             stock: item.product.stock_quantity,
           })),
         },
@@ -190,7 +200,6 @@ export class ToolsService {
           data: {
             meliProductId: product.id.toString(),
             meliProductName: product.title,
-            meliProductLink: `https://suconel.com/producto/${product.slug}`,
           },
         });
 
@@ -201,7 +210,6 @@ export class ToolsService {
           message: `He encontrado el producto "${product.title}" en Suconel, pero no hay información de precio disponible en este momento. Por favor visita el enlace para ver los detalles y precios actuales.`,
           product: {
             name: product.title,
-            link: `https://suconel.com/producto/${product.slug}`,
             id: product.id,
           },
           note: 'No se generó cotización PDF porque el precio no está disponible en el catálogo.',
@@ -223,7 +231,6 @@ export class ToolsService {
         estimatedPrice: request.estimatedPrice,
         productName: product.title,
         productId: product.id.toString(),
-        productLink: `https://suconel.com/producto/${product.slug}`,
         productPrice: product.regular_price,
         productCurrency: 'COP',
         priceUSD: priceUSD,
@@ -238,7 +245,6 @@ export class ToolsService {
         data: {
           meliProductId: product.id.toString(),
           meliProductName: product.title,
-          meliProductLink: `https://suconel.com/producto/${product.slug}`,
           meliProductPrice: product.regular_price,
           meliProductCurrency: 'COP',
           priceUSD: priceUSD,
@@ -260,13 +266,12 @@ export class ToolsService {
           price: product.regular_price,
           currency: 'COP',
           priceUSD: priceUSD,
-          link: `https://suconel.com/producto/${product.slug}`,
           score: bestProduct.score.toFixed(1),
           reasons: bestProduct.reasons,
         },
         quotation: {
           pdfDownloadUrl: downloadUrl,
-          fullUrl: `${process.env.FRONTEND_URL || 'http://localhost:3000'}${downloadUrl}`,
+          fullUrl: `${this.config.backendUrl}${downloadUrl}`,
         },
         alternativeProducts: top5Products.slice(1, 3).map(p => ({
           name: p.product.title,

@@ -84,7 +84,7 @@ export class EmailService {
           <hr style="border: none; border-top: 1px solid #e0e0e0; margin: 30px 0;">
 
           <p style="color: #999; font-size: 12px; text-align: center;">
-            ShoppingIA - Sistema de Gestión de Compras
+            QuoteIA - Sistema de Gestión de Compras
           </p>
         </div>
       </div>

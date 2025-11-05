@@ -1,5 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 import axios, { AxiosInstance } from 'axios';
+import { EnvironmentConfig } from '../../config/environment.config';
+import {
+  EXCHANGE_RATES,
+  HTTP_TIMEOUTS,
+  SUCONEL_SCORING_WEIGHTS,
+  PRICE_THRESHOLDS,
+} from '../../config/constants.config';
 
 export interface SuconelProduct {
   id: number;
@@ -37,15 +44,11 @@ export interface ProductScore {
 export class SuconelService {
   private readonly logger = new Logger(SuconelService.name);
   private readonly httpClient: AxiosInstance;
-  private readonly baseUrl = process.env.SUCONEL_BASE_URL;
-  private readonly authToken: string;
 
-  constructor() {
-    this.authToken = process.env.SUCONEL_AUTH_TOKEN || '';
-
+  constructor(private readonly config: EnvironmentConfig) {
     this.httpClient = axios.create({
-      baseURL: this.baseUrl,
-      timeout: 15000,
+      baseURL: this.config.suconelBaseUrl,
+      timeout: HTTP_TIMEOUTS.SUCONEL_API,
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -65,7 +68,7 @@ export class SuconelService {
         { search: query },
         {
           headers: {
-            'Authorization': this.authToken,
+            'Authorization': this.config.suconelAuthToken,
           },
           params: {
             v: Date.now(), // Cache buster
@@ -92,12 +95,11 @@ export class SuconelService {
   }
 
   /**
-   * Convierte COP a USD usando tasa de cambio aproximada
-   * Tasa actual: 1 USD ≈ 4,300 COP (actualizar según tasa real)
+   * Convierte COP a USD usando tasa de cambio de configuración
+   * Note: Exchange rates should eventually be fetched from external API
    */
   convertCOPtoUSD(amountCOP: number): number {
-    const exchangeRate = 4300; // 1 USD = 4,300 COP (aproximado)
-    return amountCOP / exchangeRate;
+    return amountCOP / EXCHANGE_RATES.COP_TO_USD;
   }
 
   /**
@@ -126,59 +128,62 @@ export class SuconelService {
       let score = 0;
       const reasons: string[] = [];
 
-      // 1. Stock disponible (max 30 puntos)
+      // 1. Stock disponible
       if (product.stock_quantity > 0) {
-        const stockScore = Math.min((product.stock_quantity / maxStock) * 30, 30);
+        const stockScore = Math.min(
+          (product.stock_quantity / maxStock) * SUCONEL_SCORING_WEIGHTS.STOCK,
+          SUCONEL_SCORING_WEIGHTS.STOCK
+        );
         score += stockScore;
         reasons.push(`Stock: ${product.stock_quantity} unidades (+${stockScore.toFixed(1)} pts)`);
       }
 
-      // 2. Precio razonable (max 25 puntos)
+      // 2. Precio razonable
       if (product.regular_price > 0 && avgPrice > 0) {
         const priceRatio = product.regular_price / avgPrice;
         let priceScore = 0;
-        if (priceRatio >= 0.7 && priceRatio <= 1.3) {
-          priceScore = 25; // Precio cerca del promedio
+        if (priceRatio >= PRICE_THRESHOLDS.COMPETITIVE_MIN && priceRatio <= PRICE_THRESHOLDS.COMPETITIVE_MAX) {
+          priceScore = SUCONEL_SCORING_WEIGHTS.PRICE_COMPETITIVE;
           reasons.push(`Precio competitivo (+${priceScore} pts)`);
-        } else if (priceRatio < 0.7) {
-          priceScore = 15; // Precio bajo
+        } else if (priceRatio < PRICE_THRESHOLDS.ECONOMY) {
+          priceScore = SUCONEL_SCORING_WEIGHTS.PRICE_ECONOMY;
           reasons.push(`Precio económico (+${priceScore} pts)`);
-        } else if (priceRatio > 1.3) {
-          priceScore = 10; // Precio alto
+        } else if (priceRatio > PRICE_THRESHOLDS.PREMIUM) {
+          priceScore = SUCONEL_SCORING_WEIGHTS.PRICE_PREMIUM;
           reasons.push(`Precio premium (+${priceScore} pts)`);
         }
         score += priceScore;
       }
 
-      // 3. Descuento disponible (max 15 puntos)
+      // 3. Descuento disponible
       if (product.discount_percentage && product.discount_percentage > 0) {
-        const discountScore = Math.min(product.discount_percentage, 15);
+        const discountScore = Math.min(product.discount_percentage, SUCONEL_SCORING_WEIGHTS.DISCOUNT);
         score += discountScore;
         reasons.push(`${product.discount_percentage}% descuento (+${discountScore.toFixed(1)} pts)`);
       }
 
-      // 4. Tiene imagen (10 puntos)
+      // 4. Tiene imagen
       if (product.thumbnail?.url) {
-        score += 10;
-        reasons.push('Tiene imagen (+10 pts)');
+        score += SUCONEL_SCORING_WEIGHTS.IMAGE;
+        reasons.push(`Tiene imagen (+${SUCONEL_SCORING_WEIGHTS.IMAGE} pts)`);
       }
 
-      // 5. Tiene descripción (10 puntos)
+      // 5. Tiene descripción
       if (product.temporal_description || (product.short_description && product.short_description.length > 0)) {
-        score += 10;
-        reasons.push('Tiene descripción (+10 pts)');
+        score += SUCONEL_SCORING_WEIGHTS.DESCRIPTION;
+        reasons.push(`Tiene descripción (+${SUCONEL_SCORING_WEIGHTS.DESCRIPTION} pts)`);
       }
 
-      // 6. Tiene categoría (5 puntos)
+      // 6. Tiene categoría
       if (product.product_categories && product.product_categories.length > 0) {
-        score += 5;
-        reasons.push('Categorizado (+5 pts)');
+        score += SUCONEL_SCORING_WEIGHTS.CATEGORY;
+        reasons.push(`Categorizado (+${SUCONEL_SCORING_WEIGHTS.CATEGORY} pts)`);
       }
 
-      // 7. Tiene SKU (5 puntos)
+      // 7. Tiene SKU
       if (product.sku) {
-        score += 5;
-        reasons.push('Tiene SKU (+5 pts)');
+        score += SUCONEL_SCORING_WEIGHTS.SKU;
+        reasons.push(`Tiene SKU (+${SUCONEL_SCORING_WEIGHTS.SKU} pts)`);
       }
 
       scoredProducts.push({
@@ -252,7 +257,7 @@ export class SuconelService {
         { search: '' }, // Búsqueda vacía para obtener todos
         {
           headers: {
-            'Authorization': this.authToken,
+            'Authorization': this.config.suconelAuthToken,
           },
           params: {
             v: Date.now(),

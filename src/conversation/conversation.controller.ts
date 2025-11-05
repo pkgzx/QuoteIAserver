@@ -1,10 +1,23 @@
-import { Controller, Post, Get, Body, Sse, Param, MessageEvent, Res } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Get,
+  Body,
+  Sse,
+  Param,
+  MessageEvent,
+  Res,
+  BadRequestException,
+  Logger,
+} from '@nestjs/common';
 import { ConversationService } from './conversation.service';
 import { Observable } from 'rxjs';
 import { Response } from 'express';
 
 @Controller('api/v1/conversations')
 export class ConversationController {
+  private readonly logger = new Logger(ConversationController.name);
+
   constructor(private readonly conversationService: ConversationService) {}
 
   @Post()
@@ -29,12 +42,12 @@ export class ConversationController {
     @Body('message') message: string,
   ) {
     if (!message) {
-      throw new Error('Message is required');
+      throw new BadRequestException('Message is required');
     }
 
     // Guardar mensaje y generar ID único para el stream
     const messageId = await this.conversationService.queueMessage(conversationId, message);
-    
+
     return { messageId };
   }
 
@@ -79,19 +92,19 @@ export class ConversationController {
           
           subscriber.complete();
         } catch (error) {
-          console.error(' SSE Error:', error);
-          
+          this.logger.error('SSE Error:', error.stack);
+
           subscriber.next({
             id: '0',
             data: { type: 'error', error: error.message },
           } as MessageEvent);
-          
+
           subscriber.error(error);
         }
       })();
-  
+
       return () => {
-        console.log('SSE Client disconnected');
+        this.logger.log('SSE Client disconnected');
       };
     });
   }

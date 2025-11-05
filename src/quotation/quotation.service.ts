@@ -12,7 +12,7 @@ export interface QuotationData {
   estimatedPrice: number;
   productName: string;
   productId: string;
-  productLink: string;
+  productLink?: string;
   productPrice: number;
   productCurrency: string;
   priceUSD: number;
@@ -135,11 +135,14 @@ export class QuotationService {
           .moveDown(0.5);
 
         // Precio destacado
+        const totalPriceCOP = data.productPrice * data.quantity;
+        const totalPriceUSD = data.priceUSD * data.quantity;
+
         const priceBox = {
           x: 50,
           y: doc.y,
           width: 500,
-          height: 60,
+          height: 80,
         };
 
         doc
@@ -147,22 +150,35 @@ export class QuotationService {
           .fillAndStroke('#ecf0f1', '#3498db');
 
         doc
-          .fontSize(14)
+          .fontSize(12)
           .fillColor('#2c3e50')
           .text(
-            `Precio: ${data.productCurrency} ${data.productPrice.toFixed(2)}`,
+            `Precio unitario: ${data.productCurrency} ${data.productPrice.toFixed(2)} (≈ $${data.priceUSD.toFixed(2)} USD)`,
             priceBox.x + 20,
             priceBox.y + 15,
           );
 
         doc
-          .fontSize(18)
-          .fillColor('#27ae60')
+          .fontSize(14)
+          .fillColor('#2c3e50')
+          .font('Helvetica-Bold')
           .text(
-            `≈ $${data.priceUSD.toFixed(2)} USD`,
+            `Cantidad: ${data.quantity} unidad(es)`,
             priceBox.x + 20,
             priceBox.y + 35,
-          );
+          )
+          .font('Helvetica');
+
+        doc
+          .fontSize(18)
+          .fillColor('#27ae60')
+          .font('Helvetica-Bold')
+          .text(
+            `TOTAL: ${data.productCurrency} ${totalPriceCOP.toFixed(2)} ≈ $${totalPriceUSD.toFixed(2)} USD`,
+            priceBox.x + 20,
+            priceBox.y + 55,
+          )
+          .font('Helvetica');
 
         doc.y = priceBox.y + priceBox.height + 20;
 
@@ -180,16 +196,16 @@ export class QuotationService {
           .moveDown(0.5);
 
         // Link del producto
-        doc
-          .fontSize(10)
-          .fillColor('#3498db')
-          .text('Ver producto en MercadoLibre:', { continued: false })
-          .fontSize(9)
-          .fillColor('#2980b9')
-          .text(data.productLink, {
-            link: data.productLink,
-            underline: true,
-          });
+        // doc
+        //   .fontSize(10)
+        //   .fillColor('#3498db')
+        //   .text('Ver producto en MercadoLibre:', { continued: false })
+        //   .fontSize(9)
+        //   .fillColor('#2980b9')
+        //   .text(data.productLink, {
+        //     link: data.productLink,
+        //     underline: true,
+        //   });
 
         // Footer
         doc
@@ -197,7 +213,7 @@ export class QuotationService {
           .fontSize(8)
           .fillColor('#95a5a6')
           .text(
-            'Esta cotización fue generada automáticamente por ShoppingIA',
+            'Esta cotización fue generada automáticamente por QuoteIA',
             { align: 'center' },
           )
           .text(
