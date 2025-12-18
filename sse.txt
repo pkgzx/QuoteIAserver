@@ -1,3 +1,5 @@
+id: 4
+
 id: 1
 data: {"type":"tool_start","tools":["search_knowledge_base"]}
 
